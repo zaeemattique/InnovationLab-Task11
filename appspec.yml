@@ -1,0 +1,9 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:us-west-2:504649076991:task-definition/Task7-NodeJS-Zaeem:10"
+        LoadBalancerInfo:
+          ContainerName: "NodeJS-App"
+          ContainerPort: 5000

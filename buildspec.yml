@@ -1,0 +1,40 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+  build:
+    commands:
+      - echo Creating Dockerfile...
+      - |
+        cat << 'EOF' > Dockerfile
+        FROM public.ecr.aws/docker/library/node:18-alpine
+        WORKDIR /usr/src/app
+        COPY package*.json ./
+        RUN npm install --only=production
+        COPY . .
+        EXPOSE 5000
+        CMD ["node", "index.js"]
+        EOF
+
+      - echo Building the Docker image...
+      - docker build -t $REPO_NAME:$IMAGE_TAG .
+
+      - echo Tagging image...
+      - docker tag $REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Pushing image to ECR...
+      - docker push $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+      - echo Build completed.
+
+      # Create imagedefinitions.json using the container name from your AppSpec
+      - printf '[{"name":"%s","imageUri":"%s"}]' "NodeJS-App" "$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG" > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
