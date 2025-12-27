@@ -15,8 +15,10 @@ phases:
   
   post_build:
     commands:
-      - echo "Creating deployment artifact..."
+      - echo "Creating deployment package..."
+      - zip -r application.zip . -x "*.git*" ".gitignore"
       
 artifacts:
   files:
-    - '**/*'
+    - application.zip
+  discard-paths: yes
