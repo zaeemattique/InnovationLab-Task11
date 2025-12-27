@@ -1,12 +1,13 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
       nodejs: 18
+  
+  pre_build:
     commands:
       - echo "Installing dependencies..."
-      - npm install
+      - npm install --production
   
   build:
     commands:
@@ -15,8 +16,7 @@ phases:
   post_build:
     commands:
       - echo "Creating deployment artifact..."
-
+      
 artifacts:
   files:
     - '**/*'
-  name: nodejs.zip
