@@ -8,9 +8,6 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - npm install --production
-      - echo "Verifying Procfile exists..."
-      - ls -la
-      - cat Procfile
   
   build:
     commands:
@@ -19,15 +16,7 @@ phases:
   post_build:
     commands:
       - echo "Preparing artifact..."
-      - echo "Files to be included:"
-      - ls -la
       
 artifacts:
   files:
     - '**/*'
-    - Procfile
-    - package.json
-    - package-lock.json
-    - index.js
-  name: application.zip
-  type: zip
