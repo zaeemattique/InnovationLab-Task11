@@ -8,6 +8,9 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - npm install --production
+      - echo "Verifying Procfile exists..."
+      - ls -la
+      - cat Procfile
   
   build:
     commands:
@@ -15,10 +18,16 @@ phases:
   
   post_build:
     commands:
-      - echo "Creating deployment package..."
-      - zip -r application.zip . -x "*.git*" ".gitignore"
+      - echo "Preparing artifact..."
+      - echo "Files to be included:"
+      - ls -la
       
 artifacts:
   files:
-    - application.zip
-  discard-paths: yes
+    - '**/*'
+    - Procfile
+    - package.json
+    - package-lock.json
+    - index.js
+  name: application.zip
+  type: zip
